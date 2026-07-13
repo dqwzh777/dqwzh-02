@@ -3,8 +3,7 @@
 Use this pattern when the user wants an Obsidian knowledge base or asks to connect new notes with old notes.
 
 ## Stable hubs
-- `0-使用说明`
-- `老板画像速览`
+- `0-使用说明老板画像速览`
 - `老板个人画像与协作要求-重建版`
 - `执行准则`
 - `角色画像`
