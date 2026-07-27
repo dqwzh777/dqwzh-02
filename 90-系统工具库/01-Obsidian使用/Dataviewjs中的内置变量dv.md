@@ -10,7 +10,7 @@ created: 2026-07-07
 `dv` 是 DataviewJS 的入口对象，可以读取页面、输出表格、生成列表。
 
 ```dataviewjs
-const pages = dv.pages('"01-AI入企业务库"')
+const pages = dv.pages('"03-产品与交付"')
   .sort(p => p.file.mtime, 'desc')
   .limit(10);
 

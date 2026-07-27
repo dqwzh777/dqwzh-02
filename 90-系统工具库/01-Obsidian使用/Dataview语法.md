@@ -20,7 +20,7 @@ LIMIT 20
 
 ```dataview
 LIST
-FROM "01-AI入企业务库"
+FROM "03-产品与交付"
 SORT file.name ASC
 ```
 
