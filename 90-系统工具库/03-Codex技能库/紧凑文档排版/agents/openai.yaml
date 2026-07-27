@@ -1,4 +1,0 @@
-interface:
-  display_name: "紧凑文档排版"
-  short_description: "统一排版 Word 与 PDF，控制留白并确保表格不跨页"
-  default_prompt: "Use $compact-document-layout to format this document into a compact, professional Word and PDF deliverable."

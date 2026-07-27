@@ -1,6 +1,0 @@
-interface:
-  display_name: "文件入库到 Obsidian"
-  short_description: "筛选完整成果并入库到 Obsidian 收件箱"
-  default_prompt: "Use $file-intake-to-obsidian to scan today’s meaningful completed files and save them into my Obsidian inbox."
-policy:
-  allow_implicit_invocation: true
