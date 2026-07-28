@@ -1,4 +1,7 @@
 {
-  "promptDelete": false,
-  "alwaysUpdateLinks": true
+  "promptDelete": true,
+  "alwaysUpdateLinks": true,
+  "newFileLocation": "folder",
+  "newFileFolderPath": "00-入口与收件/收件箱",
+  "attachmentFolderPath": "50-资料库/02-附件"
 }
