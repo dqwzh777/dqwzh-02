@@ -20,6 +20,7 @@ QUEUE = VAULT / "90-系统/收件系统/收件队列.json"
 QUEUE_NOTE = VAULT / "00-知识库入口/待整理资料.md"
 RUN_STATE = VAULT / "90-系统/收件系统/运行状态.json"
 RUN_REPORT = VAULT / "90-系统/收件系统/最近运行报告.md"
+MOBILE_STATE = VAULT / "90-系统/收件系统/移动端投递状态.json"
 ATTACHMENTS = VAULT / "40-资料源/附件/待整理"
 SOURCE_NOTES = VAULT / "40-资料源/待整理资料页"
 OCR_SCRIPT = Path("/Users/mac/.codex/skills/obsidian-vault-manager/scripts/vision_ocr.swift")
@@ -30,6 +31,9 @@ SOURCE_PIPELINE = VAULT / "90-系统/收件系统/second_brain_pipeline.py"
 SOURCE_OCR = VAULT / "90-系统/收件系统/vision_ocr.swift"
 LAUNCH_AGENT = Path("/Users/mac/Library/LaunchAgents/com.personal.second-brain.plist")
 ROOTS = [Path("/Users/mac/Desktop"), Path("/Users/mac/Documents"), Path("/Users/mac/Downloads")]
+MOBILE_BRANCH = "windows-inbox"
+MOBILE_INBOX = "00-知识库入口/移动端投递"
+MOBILE_DROP_ROOT = Path("/Users/mac/Documents/知识库投递/Windows移动端")
 
 TEXT_EXTS = {".md", ".txt", ".csv"}
 OFFICE_EXTS = {".docx", ".pdf", ".pptx", ".xlsx"}
@@ -182,6 +186,55 @@ def unique_target(source):
 
 def entry_id(path, digest):
     return digest[:12] if digest else hashlib.sha256(str(path).encode()).hexdigest()[:12]
+
+
+def ingest_mobile_inbox():
+    """Stage new, supported blobs from the Windows-only branch into the trusted Mac intake folder."""
+    result = {"branch": MOBILE_BRANCH, "seen": 0, "staged": 0, "skipped": 0, "failures": []}
+    fetch = subprocess.run(
+        ["git", "fetch", "--quiet", "origin", f"refs/heads/{MOBILE_BRANCH}:refs/remotes/origin/{MOBILE_BRANCH}"],
+        cwd=VAULT, capture_output=True, text=True, timeout=120,
+    )
+    if fetch.returncode != 0:
+        result["failures"].append((fetch.stderr or fetch.stdout or "无法拉取移动端投递分支").strip()[-1000:])
+        return result
+    listed = subprocess.run(
+        ["git", "ls-tree", "-r", "--name-only", f"origin/{MOBILE_BRANCH}", "--", MOBILE_INBOX],
+        cwd=VAULT, capture_output=True, text=True, timeout=60,
+    )
+    if listed.returncode != 0:
+        result["failures"].append((listed.stderr or listed.stdout or "无法读取移动端投递目录").strip()[-1000:])
+        return result
+    state = load_json(MOBILE_STATE, {})
+    delivered = set(state.get("delivered_sha256", []))
+    for rel in (line.strip() for line in listed.stdout.splitlines()):
+        if not rel:
+            continue
+        name = Path(rel).name
+        extension = Path(name).suffix.lower()
+        result["seen"] += 1
+        if name in EXCLUDED_FILES or name.startswith(".") or extension not in SUPPORTED or PRIVATE_PATTERNS.search(name):
+            result["skipped"] += 1
+            continue
+        blob = subprocess.run(["git", "show", f"origin/{MOBILE_BRANCH}:{rel}"], cwd=VAULT,
+                              capture_output=True, timeout=120)
+        if blob.returncode != 0:
+            result["failures"].append(f"无法读取 {rel}")
+            continue
+        digest = hashlib.sha256(blob.stdout).hexdigest()
+        if not blob.stdout or digest in delivered:
+            result["skipped"] += 1
+            continue
+        MOBILE_DROP_ROOT.mkdir(parents=True, exist_ok=True)
+        target = MOBILE_DROP_ROOT / f"{digest[:12]}-{name}"
+        if not target.exists():
+            target.write_bytes(blob.stdout)
+        delivered.add(digest)
+        result["staged"] += 1
+    state["delivered_sha256"] = sorted(delivered)
+    state["last_checked_at"] = datetime.now().isoformat(timespec="seconds")
+    save_json(MOBILE_STATE, state)
+    return result
 
 
 def initialize_existing(queue):
@@ -567,12 +620,12 @@ def health():
             "git_changes": git_changes}
 
 
-def write_run_report(started_at, intake_result, process_result, health_result):
+def write_run_report(started_at, mobile_result, intake_result, process_result, health_result):
     finished_at = datetime.now().isoformat(timespec="seconds")
-    status = "需要处理" if (process_result["failures"] or health_result["broken"] or
+    status = "需要处理" if (mobile_result["failures"] or process_result["failures"] or health_result["broken"] or
                             health_result["review_lag"] or health_result["runtime_failures"]) else "成功"
     payload = {"status": status, "started_at": started_at, "finished_at": finished_at,
-               "intake": intake_result, "process": process_result, "health": {
+               "mobile_inbox": mobile_result, "intake": intake_result, "process": process_result, "health": {
                    "queue": health_result["queue"], "last_intake": health_result["last_intake"],
                    "last_review": health_result["last_review"], "review_lag_days": health_result["review_lag"],
                    "broken_count": len(health_result["broken"]), "old_pending": health_result["old_pending"],
@@ -583,6 +636,7 @@ def write_run_report(started_at, intake_result, process_result, health_result):
     lines = ["---", "title: 最近运行报告", "type: system", "status: reviewed",
              f"updated: {datetime.now().strftime('%Y-%m-%d')}", "---", "", "# 最近运行报告", "",
              f"- 运行状态：**{status}**", f"- 开始：{started_at}", f"- 完成：{finished_at}",
+             f"- Windows移动端投递：发现{mobile_result['seen']}项，暂存{mobile_result['staged']}项，跳过{mobile_result['skipped']}项",
              f"- 扫描窗口：{intake_result['start']} → {intake_result['end']}",
              f"- 新增队列：{intake_result['added']}项", f"- 本次处理：{process_result['processed']}项",
              f"- 文档文本：{process_result['processed_by_type']['文档文本']}项",
@@ -590,6 +644,8 @@ def write_run_report(started_at, intake_result, process_result, health_result):
              f"- 音频转写：{process_result['processed_by_type']['音频转写']}项",
              f"- 队列：{queue_summary}", f"- 活动区断链：{len(health_result['broken'])}处",
              f"- Git待同步变更：{health_result['git_changes']}项", ""]
+    if mobile_result["failures"]:
+        lines += ["## 移动端投递异常", ""] + [f"- {item}" for item in mobile_result["failures"]] + [""]
     if process_result["failures"]:
         lines += ["## 处理失败", ""] + [f"- `{item['name']}`：{item['error']}" for item in process_result["failures"]] + [""]
     if health_result["runtime_failures"]:
@@ -605,10 +661,11 @@ def write_run_report(started_at, intake_result, process_result, health_result):
 
 def daily_run(args):
     started_at = datetime.now().isoformat(timespec="seconds")
+    mobile_result = ingest_mobile_inbox()
     intake_result = intake(args)
     process_result = process_queue()
     health_result = health()
-    status = write_run_report(started_at, intake_result, process_result, health_result)
+    status = write_run_report(started_at, mobile_result, intake_result, process_result, health_result)
     print(f"run_status={status}")
     if status != "成功":
         raise SystemExit(1)

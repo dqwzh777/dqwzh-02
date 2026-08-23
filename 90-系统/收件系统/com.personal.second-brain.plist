@@ -7,7 +7,7 @@
     <key>ProgramArguments</key>
     <array>
         <string>/Users/mac/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3</string>
-        <string>/Users/mac/.codex/skills/obsidian-vault-manager/scripts/second_brain_pipeline.py</string>
+        <string>/Users/mac/Documents/Obsidian Vault/90-系统/收件系统/second_brain_pipeline.py</string>
         <string>run</string>
     </array>
     <key>StartCalendarInterval</key>
