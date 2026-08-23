@@ -8,6 +8,8 @@ import json
 import os
 import re
 import shutil
+import subprocess
+import tempfile
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -16,15 +18,24 @@ VAULT = Path("/Users/mac/Documents/Obsidian Vault")
 STATE = VAULT / "90-系统/收件系统/收件状态.json"
 QUEUE = VAULT / "90-系统/收件系统/收件队列.json"
 QUEUE_NOTE = VAULT / "00-知识库入口/待整理资料.md"
+RUN_STATE = VAULT / "90-系统/收件系统/运行状态.json"
+RUN_REPORT = VAULT / "90-系统/收件系统/最近运行报告.md"
 ATTACHMENTS = VAULT / "40-资料源/附件/待整理"
 SOURCE_NOTES = VAULT / "40-资料源/待整理资料页"
+OCR_SCRIPT = Path("/Users/mac/.codex/skills/obsidian-vault-manager/scripts/vision_ocr.swift")
+TRANSCRIBE_BIN = Path("/Users/mac/.codex/runtime/second-brain/bin/whisper")
+TRANSCRIBE_PATH = "/Users/mac/.codex/runtime/second-brain/bin"
+WHISPER_MODEL = Path("/Users/mac/.cache/whisper/small.pt")
+SOURCE_PIPELINE = VAULT / "90-系统/收件系统/second_brain_pipeline.py"
+SOURCE_OCR = VAULT / "90-系统/收件系统/vision_ocr.swift"
+LAUNCH_AGENT = Path("/Users/mac/Library/LaunchAgents/com.personal.second-brain.plist")
 ROOTS = [Path("/Users/mac/Desktop"), Path("/Users/mac/Documents"), Path("/Users/mac/Downloads")]
 
 TEXT_EXTS = {".md", ".txt", ".csv"}
 OFFICE_EXTS = {".docx", ".pdf", ".pptx", ".xlsx"}
 LEGACY_OFFICE_EXTS = {".doc", ".ppt", ".xls"}
 IMAGE_EXTS = {".png", ".jpg", ".jpeg", ".webp", ".heic"}
-AUDIO_EXTS = {".mp3", ".m4a", ".wav", ".aac", ".flac"}
+AUDIO_EXTS = {".mp3", ".m4a", ".wav", ".aac", ".flac", ".aiff", ".aif"}
 VIDEO_EXTS = {".mp4", ".mov", ".mkv", ".webm"}
 SUPPORTED = TEXT_EXTS | OFFICE_EXTS | LEGACY_OFFICE_EXTS | IMAGE_EXTS | AUDIO_EXTS | VIDEO_EXTS
 
@@ -51,6 +62,11 @@ def parse_args():
     intake.add_argument("--max-copy-mb", type=int, default=100)
     sub.add_parser("process")
     sub.add_parser("health")
+    daily = sub.add_parser("run")
+    daily.add_argument("--since")
+    daily.add_argument("--until")
+    daily.add_argument("--max-copy-mb", type=int, default=100)
+    daily.set_defaults(dry_run=False)
     sessions = sub.add_parser("session-sources")
     sessions.add_argument("--date", default=datetime.now().strftime("%Y-%m-%d"))
     return parser.parse_args()
@@ -190,7 +206,8 @@ def initialize_existing(queue):
 
 
 def render_queue(queue):
-    order = {"待处理": 0, "待确认": 1, "仅登记": 2, "待转写": 3, "待OCR": 4, "已结构化": 5, "不入库": 9}
+    order = {"待处理": 0, "来源缺失": 1, "处理失败": 2, "待确认": 3, "仅登记": 4, "待转写": 5, "待OCR": 6,
+             "已转写待复核": 7, "已OCR待复核": 8, "已结构化": 9, "不入库": 10}
     queue = sorted(queue, key=lambda x: (order.get(x.get("status"), 8), x.get("received_at", "")), reverse=False)
     counts = {}
     for item in queue:
@@ -286,6 +303,8 @@ def intake(args):
     for item in added:
         print(f"{item['status']}\t{item['kind']}\t{item['source_path']}")
     print("skipped=" + json.dumps(skipped, ensure_ascii=False, sort_keys=True))
+    return {"start": start.isoformat(timespec="seconds"), "end": end.isoformat(timespec="seconds"),
+            "candidates": len(candidates), "added": len(added), "skipped": skipped}
 
 
 def clean_text(value):
@@ -331,6 +350,53 @@ def extract_text(path):
     raise ValueError("format requires conversion or transcription")
 
 
+def ocr_image(path):
+    if not OCR_SCRIPT.exists():
+        raise RuntimeError("macOS Vision OCR脚本不存在")
+    result = subprocess.run(["swift", str(OCR_SCRIPT), str(path)], capture_output=True, text=True, timeout=1800)
+    if result.returncode != 0:
+        raise RuntimeError((result.stderr or "Vision OCR失败").strip())
+    text = clean_text(result.stdout)
+    if not text:
+        raise RuntimeError("Vision OCR未识别到文字")
+    return text
+
+
+def format_timestamp(seconds):
+    seconds = max(0, int(float(seconds)))
+    hours, remain = divmod(seconds, 3600)
+    minutes, seconds = divmod(remain, 60)
+    return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+
+
+def transcribe_audio(path):
+    if not TRANSCRIBE_BIN.exists():
+        raise RuntimeError("本地Whisper运行环境不存在")
+    env = os.environ.copy()
+    env["PATH"] = TRANSCRIBE_PATH + os.pathsep + env.get("PATH", "")
+    with tempfile.TemporaryDirectory(prefix="second-brain-whisper-") as temp_dir:
+        command = [str(TRANSCRIBE_BIN), str(path), "--model", "small", "--device", "cpu",
+                   "--output_dir", temp_dir, "--output_format", "json", "--verbose", "False"]
+        result = subprocess.run(command, capture_output=True, text=True, env=env, timeout=14400)
+        outputs = sorted(Path(temp_dir).glob("*.json"))
+        if result.returncode != 0 or not outputs:
+            detail = (result.stderr or result.stdout or "Whisper转写失败").strip()
+            raise RuntimeError(detail[-1000:])
+        payload = load_json(outputs[0], {})
+        full_text = clean_text(payload.get("text", ""))
+        if not full_text:
+            raise RuntimeError("Whisper未识别到语音文字")
+        timeline = []
+        for segment in payload.get("segments", []):
+            text = clean_text(segment.get("text", ""))
+            if text:
+                timeline.append(f"- [{format_timestamp(segment.get('start', 0))}–{format_timestamp(segment.get('end', 0))}] {text}")
+        parts = ["### 完整转写", "", full_text]
+        if timeline:
+            parts += ["", "### 分段时间轴", "", *timeline]
+        return "\n".join(parts)
+
+
 def safe_title(name):
     title = re.sub(r"[\\/:*?\"<>|#\[\]]", "-", Path(name).stem).strip(" .-")
     return title[:80] or "未命名资料"
@@ -342,7 +408,7 @@ def create_source_note(item, text=""):
     note = SOURCE_NOTES / f"{item['id']}-{title}.md"
     source_link = f"[[{item['vault_path']}|原始文件]]" if item.get("vault_path") else f"`{item['source_path']}`"
     searchable = bool(text.strip())
-    processing = "已提取文本" if searchable else item["next_action"]
+    processing = item.get("processing_method") or ("已提取文本" if searchable else item["next_action"])
     body = [
         "---", f'title: "{title}"', "type: source", "status: raw", f'summary: "自动收件的{item["kind"]}资料，等待人工确认来源边界和知识价值。"',
         f"updated: {datetime.now().strftime('%Y-%m-%d')}", "topics:", "  - 待整理", f"source_file: \"{item.get('vault_path') or item['source_path']}\"",
@@ -354,7 +420,10 @@ def create_source_note(item, text=""):
     if searchable:
         body += ["## 自动提取文本", "", clean_text(text), ""]
     else:
-        body += ["## 待处理", "", f"- [ ] {item['next_action']}", "- [ ] 确认讲者、来源、时间和隐私边界", "- [ ] 形成可搜索文本后再提炼知识", ""]
+        body += ["## 待处理", "", f"- [ ] {item['next_action']}"]
+        if item.get("last_error"):
+            body += [f"- 最近错误：`{item['last_error']}`"]
+        body += ["- [ ] 确认讲者、来源、时间和隐私边界", "- [ ] 形成可搜索文本后再提炼知识", ""]
     body += ["## 六要素提炼", "", "### 认知 / 观点", "", "### 方法论", "", "### 故事 / 数据", "", "### 情绪表达", "", "### 可发展选题", "", "### 待办", "", "## 分流结果", "", "- 知识：待判断", "- 项目证据：待判断", "- SOP或Skill：待判断", ""]
     note.write_text("\n".join(body), encoding="utf-8")
     return note.relative_to(VAULT).with_suffix("").as_posix(), searchable
@@ -363,6 +432,8 @@ def create_source_note(item, text=""):
 def process_queue():
     queue = initialize_existing(load_json(QUEUE, []))
     changed = 0
+    failures = []
+    processed_by_type = {"文档文本": 0, "图片OCR": 0, "音频转写": 0, "待转换": 0}
     for item in queue:
         if item.get("note_path") or not item.get("vault_path"):
             continue
@@ -373,24 +444,50 @@ def process_queue():
             changed += 1
             continue
         try:
-            text = extract_text(path)
-        except Exception:
+            if item["extension"] in AUDIO_EXTS:
+                text = transcribe_audio(path)
+                item["processing_method"] = "本地Whisper small自动转写，待人工复核"
+            elif item["extension"] in IMAGE_EXTS:
+                text = ocr_image(path)
+                item["processing_method"] = "macOS Vision自动OCR，待人工复核"
+            else:
+                text = extract_text(path)
+                item["processing_method"] = "已自动提取文本"
+            item.pop("last_error", None)
+        except Exception as error:
             text = ""
+            item["last_error"] = str(error).replace("\n", " ")[:500]
+            failures.append({"name": item["name"], "error": item["last_error"]})
         note_path, searchable = create_source_note(item, text)
         item["note_path"] = note_path
-        if searchable:
+        if searchable and item["extension"] in AUDIO_EXTS:
+            item["status"] = "已转写待复核"
+            item["next_action"] = "人工复核讲者、专有名词和关键数字"
+            processed_by_type["音频转写"] += 1
+        elif searchable and item["extension"] in IMAGE_EXTS:
+            item["status"] = "已OCR待复核"
+            item["next_action"] = "人工对照图片复核错字和版面顺序"
+            processed_by_type["图片OCR"] += 1
+        elif searchable:
             item["status"] = "已结构化"
             item["next_action"] = "人工通读并决定是否提炼知识"
+            processed_by_type["文档文本"] += 1
         elif item["extension"] in AUDIO_EXTS:
             item["status"] = "待转写"
         elif item["extension"] in IMAGE_EXTS:
             item["status"] = "待OCR"
         else:
             item["status"] = "待转换"
+            processed_by_type["待转换"] += 1
         changed += 1
     save_json(QUEUE, queue)
     render_queue(queue)
     print(f"processed={changed}")
+    print(f"processing_failures={len(failures)}")
+    print("processed_by_type=" + json.dumps(processed_by_type, ensure_ascii=False, sort_keys=True))
+    for failure in failures:
+        print(f"FAILED\t{failure['name']}\t{failure['error']}")
+    return {"processed": changed, "processed_by_type": processed_by_type, "failures": failures}
 
 
 def health():
@@ -424,6 +521,97 @@ def health():
     print(f"active_broken_links={len(broken)}")
     for note, target in broken[:30]:
         print(f"BROKEN\t{note}\t{target}")
+    now = datetime.now()
+    expected_review = (now - timedelta(days=1)).date() if now.hour < 23 else now.date()
+    latest_review_date = None
+    if last_review:
+        match = re.match(r"(\d{4}-\d{2}-\d{2})", last_review.name)
+        if match:
+            latest_review_date = datetime.strptime(match.group(1), "%Y-%m-%d").date()
+    review_lag = (expected_review - latest_review_date).days if latest_review_date else 9999
+    pending_statuses = {"待处理", "来源缺失", "处理失败", "待确认", "待转写", "待OCR", "待转换"}
+    old_pending = []
+    for item in queue:
+        if item.get("status") not in pending_statuses:
+            continue
+        try:
+            received = parse_time(item["received_at"])
+        except Exception:
+            continue
+        if now - received > timedelta(days=7):
+            old_pending.append(item["name"])
+    launch_result = subprocess.run(["launchctl", "print", f"gui/{os.getuid()}/com.personal.second-brain"],
+                                   capture_output=True, text=True, timeout=30)
+    launch_loaded = launch_result.returncode == 0
+    launch_last_ok = launch_loaded and not re.search(r"last exit code = (?!0\b)\d+", launch_result.stdout)
+    runtime_checks = {
+        "pipeline_runtime": Path(__file__).exists(), "ocr_runtime": OCR_SCRIPT.exists(),
+        "transcribe_runtime": TRANSCRIBE_BIN.exists(), "whisper_model": WHISPER_MODEL.exists(),
+        "launch_agent_file": LAUNCH_AGENT.exists(), "launch_agent_loaded": launch_loaded,
+        "launch_agent_last_exit": launch_last_ok,
+        "pipeline_copy_match": SOURCE_PIPELINE.exists() and file_hash(SOURCE_PIPELINE) == file_hash(Path(__file__)),
+        "ocr_copy_match": SOURCE_OCR.exists() and OCR_SCRIPT.exists() and file_hash(SOURCE_OCR) == file_hash(OCR_SCRIPT),
+    }
+    runtime_failures = [name for name, ok in runtime_checks.items() if not ok]
+    git_result = subprocess.run(["git", "status", "--porcelain"], cwd=VAULT, capture_output=True, text=True, timeout=30)
+    git_changes = len([line for line in git_result.stdout.splitlines() if line.strip()]) if git_result.returncode == 0 else -1
+    print(f"review_lag_days={max(0, review_lag)}")
+    print(f"old_pending_over_7d={len(old_pending)}")
+    print(f"runtime_failures={len(runtime_failures)}")
+    print(f"git_worktree_changes={git_changes}")
+    for name in runtime_failures:
+        print(f"RUNTIME_FAILED\t{name}")
+    return {"queue": counts, "last_intake": load_json(STATE, {}).get("last_success_at", "unknown"),
+            "last_review": str(last_review.relative_to(VAULT)) if last_review else "none", "broken": broken,
+            "review_lag": max(0, review_lag), "old_pending": old_pending, "runtime_failures": runtime_failures,
+            "git_changes": git_changes}
+
+
+def write_run_report(started_at, intake_result, process_result, health_result):
+    finished_at = datetime.now().isoformat(timespec="seconds")
+    status = "需要处理" if (process_result["failures"] or health_result["broken"] or
+                            health_result["review_lag"] or health_result["runtime_failures"]) else "成功"
+    payload = {"status": status, "started_at": started_at, "finished_at": finished_at,
+               "intake": intake_result, "process": process_result, "health": {
+                   "queue": health_result["queue"], "last_intake": health_result["last_intake"],
+                   "last_review": health_result["last_review"], "review_lag_days": health_result["review_lag"],
+                   "broken_count": len(health_result["broken"]), "old_pending": health_result["old_pending"],
+                   "runtime_failures": health_result["runtime_failures"], "git_worktree_changes": health_result["git_changes"],
+               }}
+    save_json(RUN_STATE, payload)
+    queue_summary = "；".join(f"{key}{value}项" for key, value in sorted(health_result["queue"].items())) or "无"
+    lines = ["---", "title: 最近运行报告", "type: system", "status: reviewed",
+             f"updated: {datetime.now().strftime('%Y-%m-%d')}", "---", "", "# 最近运行报告", "",
+             f"- 运行状态：**{status}**", f"- 开始：{started_at}", f"- 完成：{finished_at}",
+             f"- 扫描窗口：{intake_result['start']} → {intake_result['end']}",
+             f"- 新增队列：{intake_result['added']}项", f"- 本次处理：{process_result['processed']}项",
+             f"- 文档文本：{process_result['processed_by_type']['文档文本']}项",
+             f"- 图片OCR：{process_result['processed_by_type']['图片OCR']}项",
+             f"- 音频转写：{process_result['processed_by_type']['音频转写']}项",
+             f"- 队列：{queue_summary}", f"- 活动区断链：{len(health_result['broken'])}处",
+             f"- Git待同步变更：{health_result['git_changes']}项", ""]
+    if process_result["failures"]:
+        lines += ["## 处理失败", ""] + [f"- `{item['name']}`：{item['error']}" for item in process_result["failures"]] + [""]
+    if health_result["runtime_failures"]:
+        lines += ["## 运行环境异常", ""] + [f"- `{name}`" for name in health_result["runtime_failures"]] + [""]
+    if health_result["review_lag"]:
+        lines += ["## 复盘积压", "", f"- 每日复盘落后{health_result['review_lag']}天。", ""]
+    if health_result["old_pending"]:
+        lines += ["## 超过7天的待处理资料", ""] + [f"- `{name}`" for name in health_result["old_pending"]] + [""]
+    lines += ["[[00-知识库入口/待整理资料|查看待整理资料]]", ""]
+    RUN_REPORT.write_text("\n".join(lines), encoding="utf-8")
+    return status
+
+
+def daily_run(args):
+    started_at = datetime.now().isoformat(timespec="seconds")
+    intake_result = intake(args)
+    process_result = process_queue()
+    health_result = health()
+    status = write_run_report(started_at, intake_result, process_result, health_result)
+    print(f"run_status={status}")
+    if status != "成功":
+        raise SystemExit(1)
 
 
 def session_sources(date_text):
@@ -447,6 +635,8 @@ def main():
         process_queue()
     elif args.command == "health":
         health()
+    elif args.command == "run":
+        daily_run(args)
     elif args.command == "session-sources":
         session_sources(args.date)
 
