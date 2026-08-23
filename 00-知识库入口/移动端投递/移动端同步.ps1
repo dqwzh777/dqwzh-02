@@ -10,7 +10,7 @@ $投递目录 = '00-知识库入口/移动端投递'
 function 确认工作区干净 {
     $状态 = @(git status --porcelain | Where-Object { $_ -notmatch '__pycache__' })
     if ($状态.Count -gt 0) {
-        throw "工作区有未提交内容。请先运行“发布”，或手动处理后再切换。"
+        throw "工作区有未提交内容。请先运行发布动作，或手动处理后再切换。"
     }
 }
 
