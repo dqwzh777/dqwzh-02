@@ -3,7 +3,7 @@ title: 技能与SOP总览
 type: system
 status: reviewed
 summary: 可重复执行的方法、检查清单、模板、SOP和Skill候选入口。
-updated: 2026-08-22
+updated: 2026-08-23
 topics:
   - Skill
   - SOP
@@ -24,6 +24,7 @@ related:
 ## 内容与资料处理
 
 - [[50-技能与SOP/整理长逐字稿]] — 规范已形成，尚未在本次迁移中创建或安装运行时Skill。
+- [[50-技能与SOP/维护个人第二大脑]] — 收件、可搜索化、提炼、验证和健康检查的统一SOP。
 
 ## 通用模板
 
