@@ -6,6 +6,8 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $投递目录 = '00-知识库入口/移动端投递'
+$仓库根目录 = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
+Set-Location -LiteralPath $仓库根目录
 
 function 确认工作区干净 {
     $状态 = @(git status --porcelain | Where-Object { $_ -notmatch '__pycache__' })
