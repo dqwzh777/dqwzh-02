@@ -648,7 +648,7 @@ def write_run_report(started_at, mobile_result, intake_result, process_result, h
              f"- 音频转写：{process_result['processed_by_type']['音频转写']}项",
              f"- 队列：{queue_summary}", f"- 活动区断链：{len(health_result['broken'])}处",
              f"- LaunchAgent运行前上次退出码：{health_result['launch_agent_last_exit']}",
-             f"- Git待同步变更：{health_result['git_changes']}项", ""]
+             f"- Git同步前变更：{health_result['git_changes']}项", ""]
     if mobile_result["failures"]:
         lines += ["## 移动端投递异常", ""] + [f"- {item}" for item in mobile_result["failures"]] + [""]
     if process_result["failures"]:
