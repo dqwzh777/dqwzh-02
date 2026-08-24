@@ -596,12 +596,12 @@ def health():
     launch_result = subprocess.run(["launchctl", "print", f"gui/{os.getuid()}/com.personal.second-brain"],
                                    capture_output=True, text=True, timeout=30)
     launch_loaded = launch_result.returncode == 0
-    launch_last_ok = launch_loaded and not re.search(r"last exit code = (?!0\b)\d+", launch_result.stdout)
+    launch_exit_match = re.search(r"last exit code = ([^\n]+)", launch_result.stdout) if launch_loaded else None
+    launch_last_exit = launch_exit_match.group(1).strip() if launch_exit_match else "unknown"
     runtime_checks = {
         "pipeline_runtime": Path(__file__).exists(), "ocr_runtime": OCR_SCRIPT.exists(),
         "transcribe_runtime": TRANSCRIBE_BIN.exists(), "whisper_model": WHISPER_MODEL.exists(),
         "launch_agent_file": LAUNCH_AGENT.exists(), "launch_agent_loaded": launch_loaded,
-        "launch_agent_last_exit": launch_last_ok,
         "pipeline_copy_match": SOURCE_PIPELINE.exists() and file_hash(SOURCE_PIPELINE) == file_hash(Path(__file__)),
         "ocr_copy_match": SOURCE_OCR.exists() and OCR_SCRIPT.exists() and file_hash(SOURCE_OCR) == file_hash(OCR_SCRIPT),
     }
@@ -611,24 +611,28 @@ def health():
     print(f"review_lag_days={max(0, review_lag)}")
     print(f"old_pending_over_7d={len(old_pending)}")
     print(f"runtime_failures={len(runtime_failures)}")
+    print(f"launch_agent_last_exit={launch_last_exit}")
     print(f"git_worktree_changes={git_changes}")
     for name in runtime_failures:
         print(f"RUNTIME_FAILED\t{name}")
     return {"queue": counts, "last_intake": load_json(STATE, {}).get("last_success_at", "unknown"),
             "last_review": str(last_review.relative_to(VAULT)) if last_review else "none", "broken": broken,
             "review_lag": max(0, review_lag), "old_pending": old_pending, "runtime_failures": runtime_failures,
-            "git_changes": git_changes}
+            "launch_agent_last_exit": launch_last_exit, "git_changes": git_changes}
 
 
 def write_run_report(started_at, mobile_result, intake_result, process_result, health_result):
     finished_at = datetime.now().isoformat(timespec="seconds")
-    status = "需要处理" if (mobile_result["failures"] or process_result["failures"] or health_result["broken"] or
-                            health_result["review_lag"] or health_result["runtime_failures"]) else "成功"
+    hard_failure = bool(mobile_result["failures"] or process_result["failures"] or
+                        health_result["broken"] or health_result["runtime_failures"])
+    needs_attention = bool(health_result["review_lag"] or health_result["old_pending"])
+    status = "失败" if hard_failure else ("需要处理" if needs_attention else "成功")
     payload = {"status": status, "started_at": started_at, "finished_at": finished_at,
                "mobile_inbox": mobile_result, "intake": intake_result, "process": process_result, "health": {
                    "queue": health_result["queue"], "last_intake": health_result["last_intake"],
                    "last_review": health_result["last_review"], "review_lag_days": health_result["review_lag"],
                    "broken_count": len(health_result["broken"]), "old_pending": health_result["old_pending"],
+                   "launch_agent_last_exit": health_result["launch_agent_last_exit"],
                    "runtime_failures": health_result["runtime_failures"], "git_worktree_changes": health_result["git_changes"],
                }}
     save_json(RUN_STATE, payload)
@@ -643,6 +647,7 @@ def write_run_report(started_at, mobile_result, intake_result, process_result, h
              f"- 图片OCR：{process_result['processed_by_type']['图片OCR']}项",
              f"- 音频转写：{process_result['processed_by_type']['音频转写']}项",
              f"- 队列：{queue_summary}", f"- 活动区断链：{len(health_result['broken'])}处",
+             f"- LaunchAgent运行前上次退出码：{health_result['launch_agent_last_exit']}",
              f"- Git待同步变更：{health_result['git_changes']}项", ""]
     if mobile_result["failures"]:
         lines += ["## 移动端投递异常", ""] + [f"- {item}" for item in mobile_result["failures"]] + [""]
@@ -656,7 +661,7 @@ def write_run_report(started_at, mobile_result, intake_result, process_result, h
         lines += ["## 超过7天的待处理资料", ""] + [f"- `{name}`" for name in health_result["old_pending"]] + [""]
     lines += ["[[00-知识库入口/待整理资料|查看待整理资料]]", ""]
     RUN_REPORT.write_text("\n".join(lines), encoding="utf-8")
-    return status
+    return status, hard_failure
 
 
 def daily_run(args):
@@ -665,9 +670,9 @@ def daily_run(args):
     intake_result = intake(args)
     process_result = process_queue()
     health_result = health()
-    status = write_run_report(started_at, mobile_result, intake_result, process_result, health_result)
+    status, hard_failure = write_run_report(started_at, mobile_result, intake_result, process_result, health_result)
     print(f"run_status={status}")
-    if status != "成功":
+    if hard_failure:
         raise SystemExit(1)
 
 

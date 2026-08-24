@@ -223,5 +223,38 @@
     "note_path": "",
     "size_mb": 0.18,
     "related_project": "待判断"
+  },
+  {
+    "id": "952cc28b4742",
+    "received_at": "2026-08-24T22:20:02",
+    "name": "01_元序智能_BOSS直聘候选人沟通实用指南.docx",
+    "kind": "文档",
+    "extension": ".docx",
+    "source_path": "/Users/mac/Desktop/01_元序智能_BOSS直聘候选人沟通实用指南.docx",
+    "vault_path": "",
+    "sha256": "952cc28b4742f9b590bd0499cc233840194239ff82ee607669cf04b1e55161b6",
+    "trust": "待确认",
+    "status": "待确认",
+    "next_action": "确认是否入库",
+    "note_path": "",
+    "size_mb": 0.05,
+    "related_project": "待判断"
+  },
+  {
+    "id": "4be854a6d55f",
+    "received_at": "2026-08-24T22:20:02",
+    "name": "02_元序智能_企业AI应用交付工程师30分钟线上初面实用指南.docx",
+    "kind": "文档",
+    "extension": ".docx",
+    "source_path": "/Users/mac/Desktop/02_元序智能_企业AI应用交付工程师30分钟线上初面实用指南.docx",
+    "vault_path": "40-资料源/附件/待整理/02_元序智能_企业AI应用交付工程师30分钟线上初面实用指南.docx",
+    "sha256": "4be854a6d55fe55ea439be06c4cef0871d3d9c9f03fa491ef48ce026b043f646",
+    "trust": "自动入库",
+    "status": "已结构化",
+    "next_action": "人工通读并决定是否提炼知识",
+    "note_path": "40-资料源/待整理资料页/4be854a6d55f-02_元序智能_企业AI应用交付工程师30分钟线上初面实用指南",
+    "size_mb": 0.05,
+    "related_project": "待判断",
+    "processing_method": "已自动提取文本"
   }
 ]
