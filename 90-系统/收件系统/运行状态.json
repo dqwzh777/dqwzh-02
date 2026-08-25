@@ -1,7 +1,7 @@
 {
   "status": "成功",
-  "started_at": "2026-08-25T06:45:58",
-  "finished_at": "2026-08-25T06:46:01",
+  "started_at": "2026-08-25T22:20:05",
+  "finished_at": "2026-08-25T22:20:12",
   "mobile_inbox": {
     "branch": "windows-inbox",
     "seen": 2,
@@ -10,12 +10,12 @@
     "failures": []
   },
   "intake": {
-    "start": "2026-08-25T06:45:30",
-    "end": "2026-08-25T06:46:01",
-    "candidates": 0,
-    "added": 0,
+    "start": "2026-08-25T06:46:01",
+    "end": "2026-08-25T22:20:09",
+    "candidates": 2,
+    "added": 2,
     "skipped": {
-      "系统或隐藏文件": 72,
+      "系统或隐藏文件": 73,
       "窗口外": 2228,
       "不支持格式": 1441,
       "疑似敏感文件": 56
@@ -34,15 +34,15 @@
   "health": {
     "queue": {
       "已结构化": 6,
-      "待确认": 10
+      "待确认": 12
     },
-    "last_intake": "2026-08-25T06:46:01",
+    "last_intake": "2026-08-25T22:20:11",
     "last_review": "90-系统/04-Codex永久记忆/00-每日复盘/2026/2026-08-24-Codex沟通复盘.md",
     "review_lag_days": 0,
     "broken_count": 0,
     "old_pending": [],
     "launch_agent_last_exit": "0",
     "runtime_failures": [],
-    "git_worktree_changes": 14
+    "git_worktree_changes": 5
   }
 }

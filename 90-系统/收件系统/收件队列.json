@@ -256,5 +256,37 @@
     "size_mb": 0.05,
     "related_project": "待判断",
     "processing_method": "已自动提取文本"
+  },
+  {
+    "id": "5b087110172c",
+    "received_at": "2026-08-25T22:20:11",
+    "name": "03_元序智能_候选人30分钟线上初面问卷表_姓名版.docx",
+    "kind": "文档",
+    "extension": ".docx",
+    "source_path": "/Users/mac/Desktop/元序智能_招聘实用指南/03_元序智能_候选人30分钟线上初面问卷表_姓名版.docx",
+    "vault_path": "",
+    "sha256": "5b087110172c934a190256c51de3bada413c0347d13d7ade7087ec99ff6a0ee3",
+    "trust": "待确认",
+    "status": "待确认",
+    "next_action": "确认是否入库",
+    "note_path": "",
+    "size_mb": 0.04,
+    "related_project": "待判断"
+  },
+  {
+    "id": "fb0ec60eb6c4",
+    "received_at": "2026-08-25T22:20:11",
+    "name": "04_元序智能_候选人反向提问标准回答库.docx",
+    "kind": "文档",
+    "extension": ".docx",
+    "source_path": "/Users/mac/Desktop/元序智能_招聘实用指南/04_元序智能_候选人反向提问标准回答库.docx",
+    "vault_path": "",
+    "sha256": "fb0ec60eb6c400f8878f990eefc641e24dc8e19514feaec29e07efbbbdb83d4e",
+    "trust": "待确认",
+    "status": "待确认",
+    "next_action": "确认是否入库",
+    "note_path": "",
+    "size_mb": 0.05,
+    "related_project": "待判断"
   }
 ]
