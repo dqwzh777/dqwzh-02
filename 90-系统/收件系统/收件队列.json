@@ -593,5 +593,21 @@
     "note_path": "",
     "size_mb": 0.01,
     "related_project": "待判断"
+  },
+  {
+    "id": "d06a71b826d0",
+    "received_at": "2026-08-28T22:20:11",
+    "name": "截屏2026-08-27 22.39.16.png",
+    "kind": "图片",
+    "extension": ".png",
+    "source_path": "/Users/mac/Desktop/良域擎动/截屏2026-08-27 22.39.16.png",
+    "vault_path": "",
+    "sha256": "d06a71b826d0d4a0355462bd01eff7517269b1ca572cfe7c8cd6916b4dfc2dec",
+    "trust": "待确认",
+    "status": "待确认",
+    "next_action": "确认是否入库",
+    "note_path": "",
+    "size_mb": 0.07,
+    "related_project": "待判断"
   }
 ]
