@@ -609,5 +609,37 @@
     "note_path": "",
     "size_mb": 0.07,
     "related_project": "待判断"
+  },
+  {
+    "id": "c80b24799ce8",
+    "received_at": "2026-08-29T22:20:05",
+    "name": "Codex 图像 2026年8月29日 09_44_20.png",
+    "kind": "图片",
+    "extension": ".png",
+    "source_path": "/Users/mac/Documents/Codex 图像 2026年8月29日 09_44_20.png",
+    "vault_path": "",
+    "sha256": "c80b24799ce85f70a1c5cdfbbd9a6d92c530a17fa7f22eba17dd8e94a3c84289",
+    "trust": "待确认",
+    "status": "待确认",
+    "next_action": "确认是否入库",
+    "note_path": "",
+    "size_mb": 0.88,
+    "related_project": "待判断"
+  },
+  {
+    "id": "a1b22fa7290a",
+    "received_at": "2026-08-29T22:20:05",
+    "name": "05_元序智能_候选人微信异步面试问答表_郑皓天.docx",
+    "kind": "文档",
+    "extension": ".docx",
+    "source_path": "/Users/mac/Downloads/05_元序智能_候选人微信异步面试问答表_郑皓天.docx",
+    "vault_path": "",
+    "sha256": "a1b22fa7290a4a8e914a9fc6ef1853db33853f58b5981e6eb8afaea7e04f686c",
+    "trust": "待确认",
+    "status": "待确认",
+    "next_action": "确认是否入库",
+    "note_path": "",
+    "size_mb": 0.06,
+    "related_project": "待判断"
   }
 ]

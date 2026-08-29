@@ -357,7 +357,8 @@ def intake(args):
         print(f"{item['status']}\t{item['kind']}\t{item['source_path']}")
     print("skipped=" + json.dumps(skipped, ensure_ascii=False, sort_keys=True))
     return {"start": start.isoformat(timespec="seconds"), "end": end.isoformat(timespec="seconds"),
-            "candidates": len(candidates), "added": len(added), "skipped": skipped}
+            "candidates": len(candidates), "added": len(added), "skipped": skipped,
+            "items": [report_item(item) for item in added]}
 
 
 def clean_text(value):
@@ -482,10 +483,18 @@ def create_source_note(item, text=""):
     return note.relative_to(VAULT).with_suffix("").as_posix(), searchable
 
 
+def report_item(item):
+    return {key: item.get(key, "") for key in (
+        "name", "kind", "source_path", "vault_path", "note_path", "trust", "status",
+        "next_action", "processing_method", "related_project",
+    )}
+
+
 def process_queue():
     queue = initialize_existing(load_json(QUEUE, []))
     changed = 0
     failures = []
+    processed_items = []
     processed_by_type = {"文档文本": 0, "图片OCR": 0, "音频转写": 0, "待转换": 0}
     for item in queue:
         if item.get("note_path") or not item.get("vault_path"):
@@ -495,6 +504,7 @@ def process_queue():
             item["status"] = "来源缺失"
             item["next_action"] = "核验原始文件和Vault副本"
             changed += 1
+            processed_items.append(report_item(item))
             continue
         try:
             if item["extension"] in AUDIO_EXTS:
@@ -533,6 +543,7 @@ def process_queue():
             item["status"] = "待转换"
             processed_by_type["待转换"] += 1
         changed += 1
+        processed_items.append(report_item(item))
     save_json(QUEUE, queue)
     render_queue(queue)
     print(f"processed={changed}")
@@ -540,7 +551,8 @@ def process_queue():
     print("processed_by_type=" + json.dumps(processed_by_type, ensure_ascii=False, sort_keys=True))
     for failure in failures:
         print(f"FAILED\t{failure['name']}\t{failure['error']}")
-    return {"processed": changed, "processed_by_type": processed_by_type, "failures": failures}
+    return {"processed": changed, "processed_by_type": processed_by_type, "failures": failures,
+            "items": processed_items}
 
 
 def health():
@@ -649,6 +661,34 @@ def write_run_report(started_at, mobile_result, intake_result, process_result, h
              f"- 队列：{queue_summary}", f"- 活动区断链：{len(health_result['broken'])}处",
              f"- LaunchAgent运行前上次退出码：{health_result['launch_agent_last_exit']}",
              f"- Git同步前变更：{health_result['git_changes']}项", ""]
+    if intake_result.get("items"):
+        lines += ["## 本次发现的具体资料", ""]
+        for item in intake_result["items"]:
+            destination = f"[[{item['vault_path']}|Vault原件]]" if item.get("vault_path") else "仅登记来源，未复制入库"
+            lines += [
+                f"### {item['name']}", "",
+                f"- 类型：{item['kind']}",
+                f"- 来源：`{item['source_path']}`",
+                f"- 来源级别：{item['trust']}",
+                f"- 当前状态：{item['status']}",
+                f"- 保存结果：{destination}",
+                f"- 下一步：{item['next_action']}", "",
+            ]
+    else:
+        lines += ["## 本次发现的具体资料", "", "- 本扫描窗口没有发现新的合格资料。", ""]
+    if process_result.get("items"):
+        lines += ["## 本次实际完成的整理", ""]
+        for item in process_result["items"]:
+            note = f"[[{item['note_path']}|查看整理后的资料页]]" if item.get("note_path") else "未生成资料页"
+            lines += [
+                f"### {item['name']}", "",
+                f"- 整理方式：{item.get('processing_method') or item['next_action']}",
+                f"- 整理后状态：{item['status']}",
+                f"- 整理结果：{note}",
+                f"- 下一步：{item['next_action']}", "",
+            ]
+    else:
+        lines += ["## 本次实际完成的整理", "", "- 本次没有完成新的全文提取、OCR或音频转写。", ""]
     if mobile_result["failures"]:
         lines += ["## 移动端投递异常", ""] + [f"- {item}" for item in mobile_result["failures"]] + [""]
     if process_result["failures"]:

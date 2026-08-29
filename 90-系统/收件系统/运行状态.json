@@ -1,7 +1,7 @@
 {
   "status": "成功",
-  "started_at": "2026-08-28T22:20:05",
-  "finished_at": "2026-08-28T22:20:11",
+  "started_at": "2026-08-30T06:25:43",
+  "finished_at": "2026-08-30T06:26:06",
   "mobile_inbox": {
     "branch": "windows-inbox",
     "seen": 2,
@@ -10,16 +10,17 @@
     "failures": []
   },
   "intake": {
-    "start": "2026-08-27T22:32:28",
-    "end": "2026-08-28T22:20:09",
-    "candidates": 1,
-    "added": 1,
+    "start": "2026-08-30T06:24:32",
+    "end": "2026-08-30T06:26:05",
+    "candidates": 0,
+    "added": 0,
     "skipped": {
-      "系统或隐藏文件": 73,
-      "窗口外": 2245,
-      "不支持格式": 1442,
-      "疑似敏感文件": 56
-    }
+      "系统或隐藏文件": 72,
+      "窗口外": 2243,
+      "疑似敏感文件": 57,
+      "不支持格式": 1444
+    },
+    "items": []
   },
   "process": {
     "processed": 0,
@@ -29,20 +30,21 @@
       "音频转写": 0,
       "待转换": 0
     },
-    "failures": []
+    "failures": [],
+    "items": []
   },
   "health": {
     "queue": {
       "已结构化": 7,
-      "待确认": 31
+      "待确认": 33
     },
-    "last_intake": "2026-08-28T22:20:11",
-    "last_review": "90-系统/04-Codex永久记忆/00-每日复盘/2026/2026-08-27-Codex沟通复盘.md",
+    "last_intake": "2026-08-30T06:26:05",
+    "last_review": "90-系统/04-Codex永久记忆/00-每日复盘/2026/2026-08-29-Codex沟通复盘.md",
     "review_lag_days": 0,
     "broken_count": 0,
     "old_pending": [],
     "launch_agent_last_exit": "0",
     "runtime_failures": [],
-    "git_worktree_changes": 5
+    "git_worktree_changes": 9
   }
 }
