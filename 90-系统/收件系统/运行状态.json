@@ -1,7 +1,7 @@
 {
-  "status": "成功",
-  "started_at": "2026-08-30T06:25:43",
-  "finished_at": "2026-08-30T06:26:06",
+  "status": "需要处理",
+  "started_at": "2026-08-31T22:20:00",
+  "finished_at": "2026-08-31T22:20:05",
   "mobile_inbox": {
     "branch": "windows-inbox",
     "seen": 2,
@@ -10,17 +10,55 @@
     "failures": []
   },
   "intake": {
-    "start": "2026-08-30T06:24:32",
-    "end": "2026-08-30T06:26:05",
-    "candidates": 0,
-    "added": 0,
+    "start": "2026-08-30T22:35:47",
+    "end": "2026-08-31T22:20:03",
+    "candidates": 28,
+    "added": 3,
     "skipped": {
-      "系统或隐藏文件": 72,
-      "窗口外": 2243,
-      "疑似敏感文件": 57,
-      "不支持格式": 1444
+      "系统或隐藏文件": 76,
+      "窗口外": 2252,
+      "疑似敏感文件": 70,
+      "不支持格式": 1527
     },
-    "items": []
+    "items": [
+      {
+        "name": "五轮沟通问答模.docx",
+        "kind": "文档",
+        "source_path": "/Users/mac/Desktop/元序智能_招聘实用指南_修订版_2026-08-26/五轮沟通问答模.docx",
+        "vault_path": "",
+        "note_path": "",
+        "trust": "待确认",
+        "status": "待确认",
+        "next_action": "确认是否入库",
+        "processing_method": "",
+        "related_project": "待判断"
+      },
+      {
+        "name": "候选人微信异步面试问答表.docx",
+        "kind": "文档",
+        "source_path": "/Users/mac/Desktop/元序智能_招聘实用指南_修订版_2026-08-26/候选人微信异步面试问答表.docx",
+        "vault_path": "",
+        "note_path": "",
+        "trust": "待确认",
+        "status": "待确认",
+        "next_action": "确认是否入库",
+        "processing_method": "",
+        "related_project": "待判断"
+      },
+      {
+        "name": "工程师_线上线下通用面试询问模板.docx",
+        "kind": "文档",
+        "source_path": "/Users/mac/Desktop/元序智能_招聘实用指南_修订版_2026-08-26/工程师_线上线下通用面试询问模板.docx",
+        "vault_path": "",
+        "note_path": "",
+        "trust": "待确认",
+        "status": "待确认",
+        "next_action": "确认是否入库",
+        "processing_method": "",
+        "related_project": "待判断"
+      }
+    ],
+    "sensitive_queue_removed": 7
   },
   "process": {
     "processed": 0,
@@ -36,15 +74,26 @@
   "health": {
     "queue": {
       "已结构化": 7,
-      "待确认": 33
+      "待确认": 37
     },
-    "last_intake": "2026-08-30T06:26:05",
-    "last_review": "90-系统/04-Codex永久记忆/00-每日复盘/2026/2026-08-29-Codex沟通复盘.md",
+    "last_intake": "2026-08-31T22:20:05",
+    "last_review": "90-系统/04-Codex永久记忆/00-每日复盘/2026/2026-08-31-Codex沟通复盘.md",
     "review_lag_days": 0,
     "broken_count": 0,
-    "old_pending": [],
+    "old_pending": [
+      "0ce4252ff0f21ae6e5d19ba20bb472c5.jpg",
+      "1bd73d2325a33cbe9d96181ee7eadffc.jpg",
+      "42715a2ead68b9f35e41b9871ecff54a.jpg",
+      "5c7d8aee2c6545d36871f5bc9c0d5457.jpg",
+      "73c945e72e9c5606a984be61b5d78f02.jpg",
+      "a0f671e1a648fbe2634bbc5ae9c8fe54.jpg",
+      "b862941ea8cee173b93ffacd0a5af98b.jpg",
+      "cbc1f1a808e16566cd1bc7a952610076.jpg",
+      "e140eeab0f3efa5410a3912bb11ce50d.jpg",
+      "01_元序智能_BOSS直聘候选人沟通实用指南.docx"
+    ],
     "launch_agent_last_exit": "0",
     "runtime_failures": [],
-    "git_worktree_changes": 9
+    "git_worktree_changes": 14
   }
 }

@@ -53,7 +53,10 @@ FINAL_HINTS = (
     "最终", "成品", "交付", "发布版", "专业版", "优化版", "方案", "手册", "报告", "清单",
     "逐字稿", "转写", "transcript", "课程", "访谈", "会议", "录音", "语音", "海报", "封面",
 )
-PRIVATE_PATTERNS = re.compile(r"(password|passwd|token|cookie|secret|api[_ -]?key|密码|密钥|验证码)", re.I)
+PRIVATE_PATTERNS = re.compile(
+    r"(password|passwd|token|cookie|secret|api[_ -]?key|密码|密钥|验证码|登录信息|账号(?:名单|信息)|"
+    r"vpn.*(?:分配|凭证|安装文件校验值|使用说明)|管理员(?:保管|发送前必读)|可直接发送_每人一份)", re.I,
+)
 
 
 def parse_args():
@@ -121,7 +124,7 @@ def is_candidate(path, start, end):
         return False, "排除目录"
     if path.suffix.lower() not in SUPPORTED:
         return False, "不支持格式"
-    if PRIVATE_PATTERNS.search(path.name):
+    if PRIVATE_PATTERNS.search(str(path)):
         return False, "疑似敏感文件"
     stat = path.stat()
     if stat.st_size == 0:
@@ -302,6 +305,11 @@ def intake(args):
     if start >= end:
         raise SystemExit("scan start must be before end")
     queue = initialize_existing(load_json(QUEUE, []))
+    original_queue_size = len(queue)
+    queue = [item for item in queue if not PRIVATE_PATTERNS.search(
+        f"{item.get('name', '')} {item.get('source_path', '')}"
+    )]
+    sensitive_queue_removed = original_queue_size - len(queue)
     by_hash = {item.get("sha256"): item for item in queue if item.get("sha256")}
     by_source = {item.get("source_path"): item for item in queue}
     candidates = []
@@ -353,12 +361,14 @@ def intake(args):
     print(f"scan_end={end.isoformat(timespec='seconds')}")
     print(f"candidates={len(candidates)}")
     print(f"new_queue_items={len(added)}")
+    print(f"sensitive_queue_removed={sensitive_queue_removed}")
     for item in added:
         print(f"{item['status']}\t{item['kind']}\t{item['source_path']}")
     print("skipped=" + json.dumps(skipped, ensure_ascii=False, sort_keys=True))
     return {"start": start.isoformat(timespec="seconds"), "end": end.isoformat(timespec="seconds"),
             "candidates": len(candidates), "added": len(added), "skipped": skipped,
-            "items": [report_item(item) for item in added]}
+            "items": [report_item(item) for item in added],
+            "sensitive_queue_removed": sensitive_queue_removed}
 
 
 def clean_text(value):
@@ -655,6 +665,7 @@ def write_run_report(started_at, mobile_result, intake_result, process_result, h
              f"- Windows移动端投递：发现{mobile_result['seen']}项，暂存{mobile_result['staged']}项，跳过{mobile_result['skipped']}项",
              f"- 扫描窗口：{intake_result['start']} → {intake_result['end']}",
              f"- 新增队列：{intake_result['added']}项", f"- 本次处理：{process_result['processed']}项",
+             f"- 凭证类资料安全隔离：{intake_result.get('sensitive_queue_removed', 0)}项（只移除队列登记，不删除源文件）",
              f"- 文档文本：{process_result['processed_by_type']['文档文本']}项",
              f"- 图片OCR：{process_result['processed_by_type']['图片OCR']}项",
              f"- 音频转写：{process_result['processed_by_type']['音频转写']}项",
