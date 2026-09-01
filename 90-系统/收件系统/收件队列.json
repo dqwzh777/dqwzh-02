@@ -705,5 +705,53 @@
     "note_path": "",
     "size_mb": 0.06,
     "related_project": "待判断"
+  },
+  {
+    "id": "17e660b4dc8a",
+    "received_at": "2026-09-01T22:20:06",
+    "name": "CLOUDBASE_TEMP_DEPLOYMENT.md",
+    "kind": "文本",
+    "extension": ".md",
+    "source_path": "/Users/mac/Desktop/CLOUDBASE_TEMP_DEPLOYMENT.md",
+    "vault_path": "",
+    "sha256": "17e660b4dc8a06900ce230f7a02bd5aca2fb9718ef85745b5f8c2c7af4d9368c",
+    "trust": "待确认",
+    "status": "待确认",
+    "next_action": "确认是否入库",
+    "note_path": "",
+    "size_mb": 0.01,
+    "related_project": "待判断"
+  },
+  {
+    "id": "e6b1cd3bb3e8",
+    "received_at": "2026-09-01T22:20:06",
+    "name": "招聘沟通与面试评判标准.docx",
+    "kind": "文档",
+    "extension": ".docx",
+    "source_path": "/Users/mac/Desktop/元序智能_招聘实用指南_修订版_2026-08-26/招聘沟通与面试评判标准.docx",
+    "vault_path": "",
+    "sha256": "e6b1cd3bb3e8cd41d2e35481fc1f3434d1b4606280a3e3cf97b6f4bf2d53cac0",
+    "trust": "待确认",
+    "status": "待确认",
+    "next_action": "确认是否入库",
+    "note_path": "",
+    "size_mb": 0.04,
+    "related_project": "待判断"
+  },
+  {
+    "id": "86513cb63f17",
+    "received_at": "2026-09-01T22:20:06",
+    "name": "元序智能_郑皓天_Offer_薪资初始沟通版_2026-09-01.docx",
+    "kind": "文档",
+    "extension": ".docx",
+    "source_path": "/Users/mac/Downloads/元序智能_郑皓天_Offer_薪资初始沟通版_2026-09-01.docx",
+    "vault_path": "",
+    "sha256": "86513cb63f17f9c7874b4f895cb0e3cd5b6ab8fac9f3e21f24b2faa55f99c819",
+    "trust": "待确认",
+    "status": "待确认",
+    "next_action": "确认是否入库",
+    "note_path": "",
+    "size_mb": 0.04,
+    "related_project": "待判断"
   }
 ]
