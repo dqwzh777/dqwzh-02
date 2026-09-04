@@ -1,7 +1,7 @@
 {
   "status": "需要处理",
-  "started_at": "2026-09-03T22:20:05",
-  "finished_at": "2026-09-03T22:20:12",
+  "started_at": "2026-09-04T22:30:48",
+  "finished_at": "2026-09-04T22:30:52",
   "mobile_inbox": {
     "branch": "windows-inbox",
     "seen": 2,
@@ -10,64 +10,38 @@
     "failures": []
   },
   "intake": {
-    "start": "2026-09-02T22:20:08",
-    "end": "2026-09-03T22:20:09",
-    "candidates": 1,
-    "added": 1,
+    "start": "2026-09-03T22:20:10",
+    "end": "2026-09-04T22:30:51",
+    "candidates": 0,
+    "added": 0,
     "skipped": {
       "系统或隐藏文件": 77,
-      "窗口外": 2253,
-      "疑似敏感文件": 108,
-      "不支持格式": 1526
+      "窗口外": 2254,
+      "不支持格式": 1527,
+      "疑似敏感文件": 108
     },
-    "items": [
-      {
-        "name": "良域擎动_微信小程序全流程交接执行手册_同事版.docx",
-        "kind": "文档",
-        "source_path": "/Users/mac/Desktop/良域擎动_微信小程序全流程交接执行手册_同事版.docx",
-        "vault_path": "40-资料源/附件/待整理/良域擎动_微信小程序全流程交接执行手册_同事版.docx",
-        "note_path": "",
-        "trust": "自动入库",
-        "status": "待处理",
-        "next_action": "自动提取可搜索文本",
-        "processing_method": "",
-        "related_project": "待判断"
-      }
-    ],
+    "items": [],
     "sensitive_queue_removed": 0
   },
   "process": {
-    "processed": 1,
+    "processed": 0,
     "processed_by_type": {
-      "文档文本": 1,
+      "文档文本": 0,
       "图片OCR": 0,
       "音频转写": 0,
       "待转换": 0
     },
     "failures": [],
-    "items": [
-      {
-        "name": "良域擎动_微信小程序全流程交接执行手册_同事版.docx",
-        "kind": "文档",
-        "source_path": "/Users/mac/Desktop/良域擎动_微信小程序全流程交接执行手册_同事版.docx",
-        "vault_path": "40-资料源/附件/待整理/良域擎动_微信小程序全流程交接执行手册_同事版.docx",
-        "note_path": "40-资料源/待整理资料页/b1003e9c9dde-良域擎动_微信小程序全流程交接执行手册_同事版",
-        "trust": "自动入库",
-        "status": "已结构化",
-        "next_action": "人工通读并决定是否提炼知识",
-        "processing_method": "已自动提取文本",
-        "related_project": "待判断"
-      }
-    ]
+    "items": []
   },
   "health": {
     "queue": {
       "已结构化": 9,
       "待确认": 49
     },
-    "last_intake": "2026-09-03T22:20:10",
-    "last_review": "90-系统/04-Codex永久记忆/00-每日复盘/2026/2026-08-31-Codex沟通复盘.md",
-    "review_lag_days": 2,
+    "last_intake": "2026-09-04T22:30:52",
+    "last_review": "90-系统/04-Codex永久记忆/00-每日复盘/2026/2026-09-03-Codex沟通复盘.md",
+    "review_lag_days": 0,
     "broken_count": 0,
     "old_pending": [
       "0ce4252ff0f21ae6e5d19ba20bb472c5.jpg",
@@ -99,10 +73,11 @@
       "微信图片_20260827141417_135_556.jpg",
       "liangyuqingdong.com.jpg",
       "【黑龙江省】不涉及前置审批承诺书20250702.docx",
-      "法定代表人授权委托书.docx"
+      "法定代表人授权委托书.docx",
+      "截屏2026-08-27 22.39.16.png"
     ],
-    "launch_agent_last_exit": "0",
+    "launch_agent_last_exit": "unknown",
     "runtime_failures": [],
-    "git_worktree_changes": 10
+    "git_worktree_changes": 3
   }
 }
