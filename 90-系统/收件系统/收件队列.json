@@ -931,5 +931,21 @@
     "size_mb": 0.09,
     "related_project": "待判断",
     "processing_method": "已自动提取文本"
+  },
+  {
+    "id": "0a779b25af10",
+    "received_at": "2026-09-06T22:25:14",
+    "name": "良域擎动_CRM项目总需求与接手交接文档_2026-09-06.docx",
+    "kind": "文档",
+    "extension": ".docx",
+    "source_path": "/Users/mac/Desktop/良域擎动_CRM项目总需求与接手交接文档_2026-09-06.docx",
+    "vault_path": "",
+    "sha256": "0a779b25af108769424d55b65a95b4aada137f01285ebfded6b1d6f2243ce280",
+    "trust": "待确认",
+    "status": "待确认",
+    "next_action": "确认是否入库",
+    "note_path": "",
+    "size_mb": 0.04,
+    "related_project": "待判断"
   }
 ]
