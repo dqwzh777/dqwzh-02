@@ -947,5 +947,21 @@
     "note_path": "",
     "size_mb": 0.04,
     "related_project": "待判断"
+  },
+  {
+    "id": "bab0a4918df5",
+    "received_at": "2026-09-08T22:20:11",
+    "name": "用户与业务交接文档_供ChatGPT使用.md",
+    "kind": "文本",
+    "extension": ".md",
+    "source_path": "/Users/mac/Desktop/用户与业务交接文档_供ChatGPT使用.md",
+    "vault_path": "",
+    "sha256": "bab0a4918df5cd3cc030cef675d2285dc54abf397ffdbea18a18fd91b1a5d895",
+    "trust": "待确认",
+    "status": "待确认",
+    "next_action": "确认是否入库",
+    "note_path": "",
+    "size_mb": 0.01,
+    "related_project": "待判断"
   }
 ]

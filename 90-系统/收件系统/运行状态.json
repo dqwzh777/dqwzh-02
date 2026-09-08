@@ -1,7 +1,7 @@
 {
   "status": "需要处理",
-  "started_at": "2026-09-07T22:31:39",
-  "finished_at": "2026-09-07T22:32:04",
+  "started_at": "2026-09-08T22:32:22",
+  "finished_at": "2026-09-08T22:32:27",
   "mobile_inbox": {
     "branch": "windows-inbox",
     "seen": 2,
@@ -10,14 +10,14 @@
     "failures": []
   },
   "intake": {
-    "start": "2026-09-07T22:20:11",
-    "end": "2026-09-07T22:32:03",
+    "start": "2026-09-08T22:20:11",
+    "end": "2026-09-08T22:32:26",
     "candidates": 0,
     "added": 0,
     "skipped": {
       "系统或隐藏文件": 71,
+      "窗口外": 2156,
       "不支持格式": 1519,
-      "窗口外": 2151,
       "疑似敏感文件": 106
     },
     "items": [],
@@ -37,11 +37,11 @@
   "health": {
     "queue": {
       "已结构化": 9,
-      "待确认": 50
+      "待确认": 51
     },
-    "last_intake": "2026-09-07T22:32:04",
-    "last_review": "90-系统/04-Codex永久记忆/00-每日复盘/2026/2026-09-04-Codex沟通复盘.md",
-    "review_lag_days": 2,
+    "last_intake": "2026-09-08T22:32:26",
+    "last_review": "90-系统/04-Codex永久记忆/00-每日复盘/2026/2026-09-07-Codex沟通复盘.md",
+    "review_lag_days": 0,
     "broken_count": 0,
     "old_pending": [
       "0ce4252ff0f21ae6e5d19ba20bb472c5.jpg",
@@ -80,10 +80,13 @@
       "批量导入 SSL 客户端模版.xlsx",
       "五轮沟通问答模.docx",
       "候选人微信异步面试问答表.docx",
-      "工程师_线上线下通用面试询问模板.docx"
+      "工程师_线上线下通用面试询问模板.docx",
+      "CLOUDBASE_TEMP_DEPLOYMENT.md",
+      "招聘沟通与面试评判标准.docx",
+      "元序智能_郑皓天_Offer_薪资初始沟通版_2026-09-01.docx"
     ],
     "launch_agent_last_exit": "0",
     "runtime_failures": [],
-    "git_worktree_changes": 5
+    "git_worktree_changes": 6
   }
 }
