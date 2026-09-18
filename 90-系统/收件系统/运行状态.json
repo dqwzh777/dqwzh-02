@@ -1,7 +1,7 @@
 {
   "status": "需要处理",
-  "started_at": "2026-09-15T22:20:01",
-  "finished_at": "2026-09-15T22:20:13",
+  "started_at": "2026-09-18T09:00:28",
+  "finished_at": "2026-09-18T09:00:32",
   "mobile_inbox": {
     "branch": "windows-inbox",
     "seen": 2,
@@ -10,87 +10,37 @@
     "failures": []
   },
   "intake": {
-    "start": "2026-09-15T08:49:38",
-    "end": "2026-09-15T22:20:05",
-    "candidates": 2,
-    "added": 2,
+    "start": "2026-09-17T22:20:10",
+    "end": "2026-09-18T09:00:31",
+    "candidates": 0,
+    "added": 0,
     "skipped": {
-      "系统或隐藏文件": 76,
-      "窗口外": 2162,
-      "不支持格式": 1606,
+      "系统或隐藏文件": 72,
+      "窗口外": 2133,
+      "不支持格式": 1579,
       "疑似敏感文件": 106
     },
-    "items": [
-      {
-        "name": "抖音账号方向与变现方式调查表.docx",
-        "kind": "文档",
-        "source_path": "/Users/mac/Documents/Codex/2026-09-15/z/outputs/抖音账号方向与变现方式调查表.docx",
-        "vault_path": "40-资料源/附件/待整理/抖音账号方向与变现方式调查表.docx",
-        "note_path": "",
-        "trust": "自动入库",
-        "status": "待处理",
-        "next_action": "自动提取可搜索文本",
-        "processing_method": "",
-        "related_project": "待判断"
-      },
-      {
-        "name": "抖音账号方向与变现方式调查表.pdf",
-        "kind": "文档",
-        "source_path": "/Users/mac/Documents/Codex/2026-09-15/z/outputs/抖音账号方向与变现方式调查表.pdf",
-        "vault_path": "40-资料源/附件/待整理/抖音账号方向与变现方式调查表.pdf",
-        "note_path": "",
-        "trust": "自动入库",
-        "status": "待处理",
-        "next_action": "自动提取可搜索文本",
-        "processing_method": "",
-        "related_project": "待判断"
-      }
-    ],
+    "items": [],
     "sensitive_queue_removed": 0
   },
   "process": {
-    "processed": 2,
+    "processed": 0,
     "processed_by_type": {
-      "文档文本": 2,
+      "文档文本": 0,
       "图片OCR": 0,
       "音频转写": 0,
       "待转换": 0
     },
     "failures": [],
-    "items": [
-      {
-        "name": "抖音账号方向与变现方式调查表.docx",
-        "kind": "文档",
-        "source_path": "/Users/mac/Documents/Codex/2026-09-15/z/outputs/抖音账号方向与变现方式调查表.docx",
-        "vault_path": "40-资料源/附件/待整理/抖音账号方向与变现方式调查表.docx",
-        "note_path": "40-资料源/待整理资料页/e3cd93a95c2a-抖音账号方向与变现方式调查表",
-        "trust": "自动入库",
-        "status": "已结构化",
-        "next_action": "人工通读并决定是否提炼知识",
-        "processing_method": "已自动提取文本",
-        "related_project": "待判断"
-      },
-      {
-        "name": "抖音账号方向与变现方式调查表.pdf",
-        "kind": "文档",
-        "source_path": "/Users/mac/Documents/Codex/2026-09-15/z/outputs/抖音账号方向与变现方式调查表.pdf",
-        "vault_path": "40-资料源/附件/待整理/抖音账号方向与变现方式调查表.pdf",
-        "note_path": "40-资料源/待整理资料页/f9f7c940d7f0-抖音账号方向与变现方式调查表",
-        "trust": "自动入库",
-        "status": "已结构化",
-        "next_action": "人工通读并决定是否提炼知识",
-        "processing_method": "已自动提取文本",
-        "related_project": "待判断"
-      }
-    ]
+    "items": []
   },
   "health": {
     "queue": {
-      "已结构化": 12,
-      "待确认": 62
+      "已结构化": 14,
+      "待确认": 85
     },
-    "last_intake": "2026-09-15T22:20:07",
-    "last_review": "90-系统/04-Codex永久记忆/00-每日复盘/2026/2026-09-14-Codex沟通复盘.md",
+    "last_intake": "2026-09-18T09:00:32",
+    "last_review": "90-系统/04-Codex永久记忆/00-每日复盘/2026/2026-09-18-Codex沟通复盘.md",
     "review_lag_days": 0,
     "broken_count": 0,
     "old_pending": [
@@ -144,10 +94,13 @@
       "截屏2026-09-02 21.13.19.png",
       "良域擎动_CRM内测使用说明_客户版.docx",
       "良域擎动_CRM项目总需求与接手交接文档_2026-09-06.docx",
-      "用户与业务交接文档_供ChatGPT使用.md"
+      "用户与业务交接文档_供ChatGPT使用.md",
+      "良财友道_WorkBuddy财税专家团_老板汇报版V3.docx",
+      "d9977734875c70ef6c3e3fbd0ef4123f.mp4",
+      "截屏2026-09-10 17.26.41.png"
     ],
     "launch_agent_last_exit": "0",
     "runtime_failures": [],
-    "git_worktree_changes": 21
+    "git_worktree_changes": 11
   }
 }
