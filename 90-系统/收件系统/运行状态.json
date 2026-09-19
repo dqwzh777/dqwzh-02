@@ -1,23 +1,25 @@
 {
-  "status": "需要处理",
-  "started_at": "2026-09-18T09:00:28",
-  "finished_at": "2026-09-18T09:00:32",
+  "status": "失败",
+  "started_at": "2026-09-19T10:52:28",
+  "finished_at": "2026-09-19T10:52:35",
   "mobile_inbox": {
     "branch": "windows-inbox",
-    "seen": 2,
+    "seen": 0,
     "staged": 0,
-    "skipped": 2,
-    "failures": []
+    "skipped": 0,
+    "failures": [
+      "kex_exchange_identification: read: Connection reset by peer\nConnection reset by 198.18.0.32 port 443\nfatal: Could not read from remote repository.\n\nPlease make sure you have the correct access rights\nand the repository exists."
+    ]
   },
   "intake": {
-    "start": "2026-09-17T22:20:10",
-    "end": "2026-09-18T09:00:31",
+    "start": "2026-09-18T22:20:08",
+    "end": "2026-09-19T10:52:35",
     "candidates": 0,
     "added": 0,
     "skipped": {
       "系统或隐藏文件": 72,
-      "窗口外": 2133,
-      "不支持格式": 1579,
+      "窗口外": 2134,
+      "不支持格式": 1580,
       "疑似敏感文件": 106
     },
     "items": [],
@@ -37,9 +39,9 @@
   "health": {
     "queue": {
       "已结构化": 14,
-      "待确认": 85
+      "待确认": 86
     },
-    "last_intake": "2026-09-18T09:00:32",
+    "last_intake": "2026-09-19T10:52:35",
     "last_review": "90-系统/04-Codex永久记忆/00-每日复盘/2026/2026-09-18-Codex沟通复盘.md",
     "review_lag_days": 0,
     "broken_count": 0,
@@ -97,10 +99,15 @@
       "用户与业务交接文档_供ChatGPT使用.md",
       "良财友道_WorkBuddy财税专家团_老板汇报版V3.docx",
       "d9977734875c70ef6c3e3fbd0ef4123f.mp4",
-      "截屏2026-09-10 17.26.41.png"
+      "截屏2026-09-10 17.26.41.png",
+      "截屏2026-09-11 18.56.26.png",
+      "报价建议及测算说明_内部汇报版.docx",
+      "良域擎动CRM_功能现状诊断与对标分析.docx",
+      "微信图片_20260911104928_33_4.jpg",
+      "微信图片_20260911200523_34_4.png"
     ],
     "launch_agent_last_exit": "0",
     "runtime_failures": [],
-    "git_worktree_changes": 11
+    "git_worktree_changes": 17
   }
 }

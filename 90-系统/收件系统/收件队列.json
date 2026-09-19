@@ -1592,5 +1592,21 @@
     "note_path": "",
     "size_mb": 0.22,
     "related_project": "待判断"
+  },
+  {
+    "id": "e854c751b268",
+    "received_at": "2026-09-18T22:20:08",
+    "name": "朱萸抖音个人IP方向建议与待确认事项.docx",
+    "kind": "文档",
+    "extension": ".docx",
+    "source_path": "/Users/mac/Documents/Codex/2026-09-18/朱萸抖音个人IP方向建议与待确认事项.docx",
+    "vault_path": "",
+    "sha256": "e854c751b2687f3412f29abe3ebc71a36859b59ea96c7543bef5a60c463dad6c",
+    "trust": "待确认",
+    "status": "待确认",
+    "next_action": "确认是否入库",
+    "note_path": "",
+    "size_mb": 0.04,
+    "related_project": "待判断"
   }
 ]
