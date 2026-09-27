@@ -1,26 +1,24 @@
 {
-  "status": "失败",
-  "started_at": "2026-09-19T10:52:28",
-  "finished_at": "2026-09-19T10:52:35",
+  "status": "需要处理",
+  "started_at": "2026-09-26T23:31:48",
+  "finished_at": "2026-09-26T23:31:56",
   "mobile_inbox": {
     "branch": "windows-inbox",
-    "seen": 0,
+    "seen": 2,
     "staged": 0,
-    "skipped": 0,
-    "failures": [
-      "kex_exchange_identification: read: Connection reset by peer\nConnection reset by 198.18.0.32 port 443\nfatal: Could not read from remote repository.\n\nPlease make sure you have the correct access rights\nand the repository exists."
-    ]
+    "skipped": 2,
+    "failures": []
   },
   "intake": {
-    "start": "2026-09-18T22:20:08",
-    "end": "2026-09-19T10:52:35",
+    "start": "2026-09-26T22:20:07",
+    "end": "2026-09-26T23:31:55",
     "candidates": 0,
     "added": 0,
     "skipped": {
-      "系统或隐藏文件": 72,
-      "窗口外": 2134,
-      "不支持格式": 1580,
-      "疑似敏感文件": 106
+      "不支持格式": 752,
+      "系统或隐藏文件": 77,
+      "窗口外": 1961,
+      "疑似敏感文件": 102
     },
     "items": [],
     "sensitive_queue_removed": 0
@@ -38,11 +36,12 @@
   },
   "health": {
     "queue": {
-      "已结构化": 14,
-      "待确认": 86
+      "已结构化": 17,
+      "待确认": 158,
+      "已OCR待复核": 1
     },
-    "last_intake": "2026-09-19T10:52:35",
-    "last_review": "90-系统/04-Codex永久记忆/00-每日复盘/2026/2026-09-18-Codex沟通复盘.md",
+    "last_intake": "2026-09-26T23:31:56",
+    "last_review": "90-系统/04-Codex永久记忆/00-每日复盘/2026/2026-09-26-Codex沟通复盘.md",
     "review_lag_days": 0,
     "broken_count": 0,
     "old_pending": [
@@ -104,10 +103,37 @@
       "报价建议及测算说明_内部汇报版.docx",
       "良域擎动CRM_功能现状诊断与对标分析.docx",
       "微信图片_20260911104928_33_4.jpg",
-      "微信图片_20260911200523_34_4.png"
+      "微信图片_20260911200523_34_4.png",
+      "截屏2026-09-12 09.50.44.png",
+      "工具静态审查_2026-09-13.md",
+      "截屏2026-09-14 17.20.47.png",
+      "妹妹抖音账号方向诊断问卷_可填写版.docx",
+      "page-1.png",
+      "page-2.png",
+      "page-3.png",
+      "page-4.png",
+      "page-5.png",
+      "page-6.png",
+      "page-1.png",
+      "page-2.png",
+      "page-3.png",
+      "page-4.png",
+      "page-5.png",
+      "page-1.png",
+      "page-2.png",
+      "page-3.png",
+      "page-4.png",
+      "page-5.png",
+      "page-1.png",
+      "page-2.png",
+      "page-3.png",
+      "page-4.png",
+      "page-5.png",
+      "page-6.png",
+      "朱萸抖音个人IP方向建议与待确认事项.docx"
     ],
     "launch_agent_last_exit": "0",
     "runtime_failures": [],
-    "git_worktree_changes": 17
+    "git_worktree_changes": 29
   }
 }
